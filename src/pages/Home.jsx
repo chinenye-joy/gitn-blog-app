@@ -1,18 +1,16 @@
-import SearchBar from '../Components/SearchBar'
-
-
+import { useState } from "react";
+import SearchBar from "../Components/SearchBar";
+import CategoryFilter from "../components/CategoryFilter";
 
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   return (
-   
-  <div>
-  
+    <div>
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <CategoryFilter setSelectedCategory={setSelectedCategory} />
+    </div>
+  );
+};
 
-  <SearchBar/>
-   </div>
-
- 
-  )
-}
-
-export default Home
+export default Home;

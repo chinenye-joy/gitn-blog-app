@@ -10,7 +10,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
          <div className="w-full max-w-2xl mx-auto flex flex-col sm:flex-row py-15 gap-4 p-4">
     <input
       type="text"
-      placeholder="Search..."
+     placeholder="Search by title or tag..."
       value={searchQuery}
       onChange={handleChange}
       className="
