@@ -19,7 +19,7 @@ const Navbar = () => {
     <nav className=" bg-gray-800 text-white shadow-md">
       {/* Logo */}
       <div className="max-w-[1200px] mx-auto p-4 flex items-center justify-between">
-        <Link to="/" className="text-3xl font-bold text-blue-600 z-20 ">
+        <Link to="/" className="text-3xl font-bold font-mono text-blue-600 z-20 ">
           Frontend<span className="text-white text-3xl">Blog</span>
         </Link>
         {!isOpen && (
@@ -29,28 +29,28 @@ const Navbar = () => {
         )}
         {isOpen && (
           <div onClick={toggelMenu} className="cursor-pointer md:hidden z-20">
-            <IoIosClose size={30} />
+            <IoIosClose size={34} />
           </div>
         )}
         {isOpen ? (
           <div className="bg-black overflow-y-hidden fixed z-10 left-0 top-0 w-screen min-h-screen flex justify-center items-center flex-col gap-10 duration-300 ease-in">
             <ul >
               <li>
-                <Link to="/"  onClick={() => setIsOpen(false)} className="text-white hover:text-blue-600 font-bold">
+                <Link to="/"  onClick={() => setIsOpen(false)} className="text-white hover:text-blue-600 font-bold font-serif">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/about"  onClick={() => setIsOpen(false)} className="text-white font-bold hover:text-blue-600">
+                <Link to="/about"  onClick={() => setIsOpen(false)} className="text-white font-bold font-serif hover:text-blue-600">
                   About
                 </Link>
               </li>
               <li>
                 <Link
                   to="/addpost"  onClick={() => setIsOpen(false)}
-                  className="text-white hover:text-blue-600 font-bold"
+                  className="text-white hover:text-blue-600 font-serif font-bold"
                 >
-                  Add Post
+                  AddPost
                 </Link>
               </li>
             </ul>
