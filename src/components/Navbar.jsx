@@ -14,7 +14,7 @@ const Navbar = () => {
     } else {
       document.body.classList.remove("no-scroll");
     }
-  });
+  }, [isOpen]);
   return (
     <nav className=" bg-gray-800 text-white shadow-md">
       {/* Logo */}
