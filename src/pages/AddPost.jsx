@@ -5,8 +5,7 @@ import Footer from '../Components/Footer'
 const AddPost = () => {
   return (
    <>
-   <Navbar/>
-   <Footer/>
+   
    </>
   )
 }

@@ -1,5 +1,5 @@
 import SearchBar from '../Components/SearchBar'
-import Navbar from '../Components/Navbar'
+
 
 
 const Home = () => {
@@ -7,7 +7,7 @@ const Home = () => {
    
   <div>
   
-  <Navbar/>
+
   <SearchBar/>
    </div>
 

@@ -7,13 +7,15 @@ import About from "../pages/About";
 
 const AppRoutes = () => {
   return (
-    <Routes>
+    <>
       <Navbar />
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/addpost" element={<AddPost />} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/addpost" element={<AddPost />} />
+      </Routes>
       <Footer />
-    </Routes>
+    </>
   );
 };
 
