@@ -16,9 +16,9 @@ const Navbar = () => {
     }
   }, [isOpen]);
   return (
-    <nav className=" bg-gray-800 text-white shadow-md">
+    <nav className=" bg-gray-800 fixed top-0 left-0 right-0 z-10 text-white shadow-md ">
       {/* Logo */}
-      <div className="max-w-[1200px] mx-auto p-4 flex items-center justify-between">
+      <div className=" max-w-[1200px] mx-auto px-4 py-4 flex items-center justify-between   ">
         <Link
           to="/"
           className="text-3xl font-bold font-mono text-blue-600 z-20 "

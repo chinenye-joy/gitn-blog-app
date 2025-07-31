@@ -1,3 +1,9 @@
+import html from "../images/html-2.avif"
+import css from "../images/css.avif"
+import javascript from "../images/javascript.avif"
+import tailwind from "../images/tailwind.avif"
+import react from "../images/react.avif"
+
 export const initialPosts = [
   {
     id: 1,
@@ -20,12 +26,12 @@ HTML is the first language every frontend developer learns. It allows you to def
 HTML works with CSS and JavaScript to bring websites to life. If HTML is the structure of a house, CSS is the design, and JavaScript is the interactivity.
 
 ### Final Tip:
-Always keep your HTML semantic — use tags for what they’re meant to do. This helps with SEO and accessibility.
+Always keep your HTML semantic — use tags for what they're meant to do. This helps with SEO and accessibility.
     `,
     tags: ["HTML", "Beginner"],
     category: "HTML",
     date: "2025-07-29",
-    url: "https://source.unsplash.com/random/400x201"
+   url: html
   },
   {
     id: 2,
@@ -53,12 +59,13 @@ Without CSS, websites would look like plain documents. CSS lets you transform HT
 - Media Queries for responsiveness
 
 ### Final Tip:
-Master the Box Model first. It’s the core concept behind spacing and layout in CSS.
+Master the Box Model first. It's the core concept behind spacing and layout in CSS.
     `,
     tags: ["CSS", "Styling"],
     category: "CSS",
     date: "2025-07-29",
-    url: "https://source.unsplash.com/random/400x202"
+  url:css
+
   },
   {
     id: 3,
@@ -88,7 +95,8 @@ Practice building small things: a calculator, a todo list, a countdown timer —
     tags: ["JavaScript", "Logic"],
     category: "JavaScript",
     date: "2025-07-29",
-    url: "https://source.unsplash.com/random/400x203"
+url: javascript
+
   },
   {
     id: 4,
@@ -118,14 +126,15 @@ Don’t memorize all the classes. Use the Tailwind docs and practice — soon it
     tags: ["Tailwind", "CSS"],
     category: "Tailwind",
     date: "2025-07-29",
-    url: "https://source.unsplash.com/random/400x204"
+  url: tailwind
+
   },
   {
     id: 5,
     title: "Getting Started with React",
     description: "React is a powerful JavaScript library for building UIs.",
     content: `
-React is a JavaScript library for building user interfaces. It’s component-based, declarative, and extremely popular in frontend development.
+React is a JavaScript library for building user interfaces. It's component-based, declarative, and extremely popular in frontend development.
 
 ### Why React?
 It allows developers to break UIs into small, reusable pieces (components). It also handles DOM updates efficiently using a virtual DOM.
@@ -138,7 +147,7 @@ It allows developers to break UIs into small, reusable pieces (components). It a
 - Hooks: Functions like useEffect and useState that let you use state and lifecycle features
 
 ### Real World Use:
-React is used in products like Facebook, Instagram, Airbnb, and Netflix. It’s great for building modern SPAs (Single Page Applications).
+React is used in products like Facebook, Instagram, Airbnb, and Netflix. It's great for building modern SPAs (Single Page Applications).
 
 ### Final Tip:
 Focus on understanding props and state first — once you get them, everything else becomes easier.
@@ -146,6 +155,7 @@ Focus on understanding props and state first — once you get them, everything e
     tags: ["React", "Components"],
     category: "React",
     date: "2025-07-29",
-    url: "https://source.unsplash.com/random/400x205"
+   url: react
+
   }
 ];
