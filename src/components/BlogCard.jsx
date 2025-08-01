@@ -1,115 +1,58 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const AddPost = () => {
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    content: "",
-    tags: "",
-    category: "",
-  });
-
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const savedPosts = JSON.parse(localStorage.getItem("blog-posts")) || [];
-
-    const newPost = {
-      id: Date.now(),
-      title: formData.title,
-      description: formData.description,
-      content: formData.content,
-      tags: formData.tags.split(",").map((tag) => tag.trim()),
-      category: formData.category,
-      date: new Date().toISOString().split("T")[0],
-      url: "https://source.unsplash.com/600x300/?blog,developer",
-    };
-
-    const updatedPosts = [newPost, ...savedPosts];
-    localStorage.setItem("blog-posts", JSON.stringify(updatedPosts));
-
-    // Optional: clear form
-    setFormData({
-      title: "",
-      description: "",
-      content: "",
-      tags: "",
-      category: "",
-    });
-
-    // Navigate back
-    navigate("/");
-  };
-
+const BlogCard = ({ post, deletePost }) => {
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-md shadow">
-      <h2 className="text-2xl font-bold mb-6 text-black">Add New Post</h2>
+    <div className="w-full max-w-4xl bg-white shadow-sm rounded-md border border-gray-200 mb-6  overflow-hidden  md:ml-10">
+      <div className="flex  flex-col md:flex-row">
+        {/* Image Section */}
+        <div className="md:w-1/3">
+          <img
+            src={post.url}
+            alt={post.title}
+            className="w-full h-60 object-cover md:rounded-l-md md:rounded-r-none"
+          />
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Title"
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded"
-        />
+        {/* Text Section */}
+        <div className="md:w-2/3 p-5 flex flex-col justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-black mb-2">{post.title}</h2>
+            <p className="text-gray-700 mb-4">{post.description}</p>
 
-        <input
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Short Description"
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded"
-        />
+            <div className="flex flex-wrap gap-2 text-sm mb-3">
+              <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full">
+                {post.category}
+              </span>
+              {post.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-200 text-gray-600 px-3 py-1 rounded-full"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
 
-        <textarea
-          name="content"
-          value={formData.content}
-          onChange={handleChange}
-          placeholder="Full Content"
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded h-32"
-        />
+          <div className="flex justify-between items-center mt-4">
+            <Link
+              to={`/post/${post.id}`}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+            >
+              Read More
+            </Link>
 
-        <input
-          name="tags"
-          value={formData.tags}
-          onChange={handleChange}
-          placeholder="Tags (comma-separated)"
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded"
-        />
-
-        <input
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category"
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded"
-        />
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-        >
-          Publish Post
-        </button>
-      </form>
+            <button
+              onClick={() => deletePost(post.id)}
+              className="text-red-500 hover:underline text-sm"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default AddPost;
+export default BlogCard;

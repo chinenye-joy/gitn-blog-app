@@ -2,8 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import AddPost from "../pages/AddPost";
 import Post from "../pages/Post";
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import About from "../pages/About";
 
 const AppRoutes = () => {

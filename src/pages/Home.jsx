@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { initialPosts } from "../data/posts";
 import CategoryFilter from "../components/CategoryFilter";
 import BlogCard from "../components/BlogCard";
-import SearchBar from "../Components/SearchBar";
+import SearchBar from "../components/SearchBar";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Load posts from localStorage or fallback to initialPosts
+  // Load fresh posts when query or category changes
   useEffect(() => {
     const savedPosts = JSON.parse(localStorage.getItem("blog-posts"));
     if (savedPosts && savedPosts.length > 0) {
@@ -18,23 +18,30 @@ const Home = () => {
       setPosts(initialPosts);
       localStorage.setItem("blog-posts", JSON.stringify(initialPosts));
     }
+  }, [searchQuery, selectedCategory]);
+
+  // Optional: listen to localStorage change from another tab
+  useEffect(() => {
+    const syncPosts = () => {
+      const latest = JSON.parse(localStorage.getItem("blog-posts")) || [];
+      setPosts(latest);
+    };
+
+    window.addEventListener("storage", syncPosts);
+    return () => window.removeEventListener("storage", syncPosts);
   }, []);
 
-  // Save posts whenever they change
-  useEffect(() => {
-    localStorage.setItem("blog-posts", JSON.stringify(posts));
-  }, [posts]);
-
-  // Delete a post
+  // Delete post
   const deletePost = (id) => {
     const updated = posts.filter((post) => post.id !== id);
     setPosts(updated);
+    localStorage.setItem("blog-posts", JSON.stringify(updated));
   };
 
-  // Unique categories
+  // Categories
   const categories = [...new Set(posts.map((post) => post.category))];
 
-  // Filtered posts
+  // Filter
   const filteredPosts = posts.filter((post) => {
     const matchesCategory =
       selectedCategory === "All" || post.category === selectedCategory;
@@ -58,14 +65,15 @@ const Home = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
-<div className="px-4 space-y-6">
-      {filteredPosts.length > 0 ? (
-        filteredPosts.map((post) => (
-          <BlogCard key={post.id} post={post} deletePost={deletePost} />
-        ))
-      ) : (
-        <p className="text-center text-gray-600 mt-10">No posts found.</p>
-      )}
+
+      <div className="md:px-4 md:space-y-6 overflow-hidden">
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((post) => (
+            <BlogCard key={post.id} post={post} deletePost={deletePost} />
+          ))
+        ) : (
+          <p className="text-center text-gray-600 mt-10">No posts found.</p>
+        )}
       </div>
     </div>
   );

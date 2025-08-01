@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddPost = () => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -13,36 +12,35 @@ const AddPost = () => {
     category: "",
   });
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("blog-posts")) || [];
-    setPosts(saved);
-  }, []);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const newPost = {
-      id: Date.now(),
-      title: formData.title,
-      description: formData.description,
-      content: formData.content,
-      tags: formData.tags.split(",").map((tag) => tag.trim()),
-      category: formData.category,
-      date: new Date().toISOString().split("T")[0],
-      url: "https://source.unsplash.com/600x300/?blog,developer",
-    };
-
-    const updatedPosts = [newPost, ...posts];
-    localStorage.setItem("blog-posts", JSON.stringify(updatedPosts));
-    navigate("/");
+  const newPost = {
+    id: Date.now(),
+    title: formData.title,
+    description: formData.description,
+    content: formData.content,
+    tags: formData.tags.split(",").map((tag) => tag.trim()),
+    category: formData.category,
+    date: new Date().toISOString().split("T")[0],
+    url: "https://source.unsplash.com/600x300/?blog,developer",
   };
 
+  const saved = JSON.parse(localStorage.getItem("blog-posts")) || [];
+  const updatedPosts = [newPost, ...saved];
+  localStorage.setItem("blog-posts", JSON.stringify(updatedPosts));
+
+  navigate("/", { replace: true });
+  window.location.reload(); // ✅ force homepage to reload fresh posts
+};
+
+
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-md shadow">
+    <div className="max-w-3xl mx-auto mt-20 p-6 bg-white rounded-md shadow">
       <h2 className="text-2xl font-bold mb-6 text-black">Add New Post</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
