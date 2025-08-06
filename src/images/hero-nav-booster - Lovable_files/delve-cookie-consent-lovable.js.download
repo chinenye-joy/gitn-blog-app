@@ -1,0 +1,1015 @@
+(function(h,s){"use strict";class p{static originalCreateElement=null;static originalCookieDescriptor=null;static blockedCookies=new Set;static enabledCategories=new Set(["necessary"]);static init(){this.interceptScripts(),this.interceptCookies()}static interceptScripts(){this.originalCreateElement||(this.originalCreateElement=s.createElement,s.createElement=function(e){const r=p.originalCreateElement.call(this,e);if(e.toLowerCase()==="script"){const n=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,"src")?.set;n&&Object.defineProperty(r,"src",{set:function(a){const c=this.dataset.category;c&&!p.enabledCategories.has(c)||n.call(this,a)},get:function(){return this.getAttribute("src")}})}return r})}static interceptCookies(){this.originalCookieDescriptor||(this.originalCookieDescriptor=Object.getOwnPropertyDescriptor(Document.prototype,"cookie"),Object.defineProperty(s,"cookie",{get:this.originalCookieDescriptor.get,set:function(e){const r=e.split("=")[0].trim(),n=p.getCookieCategory(r);n&&!p.enabledCategories.has(n)||p.originalCookieDescriptor.set.call(this,e)}}))}static getCookieCategory(e){for(const[r,n]of Object.entries(o.categories))if(n.cookies){for(const a of n.cookies)if(a instanceof RegExp&&a.test(e)||typeof a=="string"&&a===e)return r}return null}static updateConsent(e){this.enabledCategories=new Set(Object.keys(e).filter(r=>e[r].enabled)),this.processScriptTags(e),this.clearCookiesForDisabledCategories(e)}static processScriptTags(e){s.querySelectorAll("script[data-category]").forEach(n=>{const a=n.dataset.category,c=a.startsWith("!"),l=c?a.slice(1):a,g=e[l]?.enabled;if((c?!g:g)&&n.type==="text/plain"){const u=s.createElement("script");Array.from(n.attributes).forEach(f=>{f.name!=="type"&&u.setAttribute(f.name,f.value)});const z=n.dataset.type;u.type=z||"text/javascript",n.src||n.dataset.src?u.src=n.src||n.dataset.src:u.textContent=n.textContent,n.parentNode?.replaceChild(u,n)}})}static clearCookiesForDisabledCategories(e){Object.keys(e).forEach(r=>{const n=e[r];!n.enabled&&n.cookies&&n.cookies.forEach(a=>{this.clearCookiesByPattern(a)})})}static clearCookiesByPattern(e){s.cookie.split(";").forEach(n=>{const a=n.split("=")[0].trim();let c=!1;e instanceof RegExp?c=e.test(a):typeof e=="string"&&(c=e===a),c&&this.deleteCookie(a)})}static deleteCookie(e,r="",n="/"){const a=r?`; domain=${r}`:"",c=n?`; path=${n}`:"";if(s.cookie=`${e}=; expires=Thu, 01 Jan 1970 00:00:00 UTC${c}${a}`,!r){const l=h.location.hostname;s.cookie=`${e}=; expires=Thu, 01 Jan 1970 00:00:00 UTC${c}; domain=${l}`,s.cookie=`${e}=; expires=Thu, 01 Jan 1970 00:00:00 UTC${c}; domain=.${l}`}}}const O=`
+        .delve-cookie-banner * {
+            box-sizing: border-box;
+        }
+        
+        .delve-cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            transform: translateY(100px);
+            background: #FCFBF8;
+            border: 1px solid #E5E7EB;
+            border-radius: 1.75rem;
+            padding: 20px;
+            max-width: 300px;
+            width: calc(100vw - 40px);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #374151;
+            z-index: 999999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            /* Reset properties to prevent inheritance */
+            margin: 0;
+            line-height: 1.4;
+            font-size: 0.875rem;
+            text-align: left;
+            vertical-align: baseline;
+            direction: ltr;
+            letter-spacing: normal;
+            word-spacing: normal;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-cookie-banner {
+                background: hsl(0 0% 11%);
+                border: 1px solid hsl(0 0% 20%);
+                color: #F9FAFB;
+            }
+        }
+        
+        .delve-cookie-banner.show {
+            transform: translateY(0);
+        }
+        
+        .delve-cookie-banner.hiding {
+            transform: translateY(120px);
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+        
+        .delve-banner-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .delve-banner-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .delve-banner-icon {
+            display: none;
+        }
+        
+        .delve-banner-text {
+            flex: 1;
+        }
+        
+        .delve-banner-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+            color: #1B1B1B;
+            display: block;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-banner-title {
+                color: #F9FAFB;
+            }
+        }
+        
+        .delve-banner-message {
+            font-size: 0.8125rem;
+            line-height: 1.4;
+            margin: 0;
+            color: #6B7280;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-banner-message {
+                color: #D1D5DB;
+            }
+        }
+        
+        .delve-privacy-link {
+            font-size: 0.75rem;
+            color: #3B82F6;
+            text-decoration: none;
+            margin: 0;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-privacy-link {
+                color: #FFFFFF;
+            }
+        }
+        
+        .delve-privacy-link:hover {
+            text-decoration: underline;
+        }
+        
+        .delve-preferences-link {
+            font-size: 0.8125rem;
+            color: #6B7280;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-preferences-link {
+                color: #D1D5DB;
+            }
+        }
+        
+        .delve-preferences-link:hover {
+            color: #374151;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-preferences-link:hover {
+                color: #F9FAFB;
+            }
+        }
+        
+        .delve-banner-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .delve-banner-footer {
+            padding: 16px 0 0 0;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .delve-banner-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .delve-banner-brand-text {
+            font-size: 0.6875rem;
+            color: #9CA3AF;
+        }
+        
+        .delve-banner-brand-logo {
+            width: 60px;
+            height: 18px;
+            flex-shrink: 0;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 1px;
+            margin-top: -3px;
+        }
+        
+        .delve-banner-brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+        
+        .delve-banner-brand-logo svg {
+            width: 60px;
+            height: 18px;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+        
+        .delve-banner-brand-link {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-banner-brand-link {
+                color: #FFFFFF;
+            }
+        }
+        
+        .delve-banner-brand-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Auto-accept progress bar - removed */
+        
+        .delve-btn {
+            padding: 0.625rem 0.875rem;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            min-height: 2.25rem;
+            width: 100%;
+            outline: none;
+        }
+        
+        .delve-btn:focus-visible {
+            outline: 2px solid #3B82F6;
+            outline-offset: 2px;
+        }
+        
+        .delve-btn-primary {
+            background: #1B1B1B;
+            color: white;
+            border: none;
+        }
+        
+        .delve-btn-primary:hover {
+            background: #383838;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-btn-primary {
+                background: #FFFFFF;
+                color: #1B1B1B;
+                border: none;
+            }
+            
+            .delve-btn-primary:hover {
+                background: #E5E7EB;
+                box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+            }
+        }
+        
+        .delve-btn-secondary {
+            background: #F7F4ED;
+            color: #374151;
+            border: none;
+        }
+        
+        .delve-btn-secondary:hover {
+            background: #EDE8DF;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-btn-secondary {
+                background: hsl(0 0% 20%);
+                color: #D1D5DB;
+                border: none;
+            }
+            
+            .delve-btn-secondary:hover {
+                background: hsl(0 0% 25%);
+                box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+            }
+        }
+        
+        .delve-btn-tertiary {
+            background: transparent;
+            color: #6B7280;
+            border: 1px solid #E5E7EB;
+        }
+        
+        .delve-btn-tertiary:hover {
+            background: #F9FAFB;
+            color: #374151;
+            border-color: #9CA3AF;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-btn-tertiary {
+                background: transparent;
+                color: #D1D5DB;
+                border: 1px solid hsl(0 0% 30%);
+            }
+            
+            .delve-btn-tertiary:hover {
+                background: hsl(0 0% 15%);
+                color: #F9FAFB;
+                border-color: hsl(0 0% 40%);
+                box-shadow: 0 2px 6px rgba(255, 255, 255, 0.04);
+            }
+        }
+        
+
+        
+        /* Settings Sheet */
+        .delve-settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0);
+            z-index: 1000000;
+            display: none;
+            backdrop-filter: none;
+            overflow: hidden;
+            touch-action: none;
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+        
+        .delve-settings-overlay.show {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-overlay.show {
+                background: rgba(0, 0, 0, 0.7);
+            }
+        }
+        
+        .delve-settings-modal {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: #FCFBF8;
+            border-radius: 20px 0 0 20px;
+            width: 450px;
+            max-width: 90vw;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .delve-settings-overlay.show .delve-settings-modal {
+            transform: translateX(0);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-modal {
+                background: hsl(0 0% 11%);
+                color: #F9FAFB;
+            }
+        }
+        
+        .delve-settings-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+        }
+        
+        .delve-settings-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: #6B7280;
+            transition: color 0.2s ease;
+            z-index: 10;
+        }
+        
+        .delve-settings-close:hover {
+            color: #1B1B1B;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-close {
+                color: #9CA3AF;
+            }
+            
+            .delve-settings-close:hover {
+                color: #F9FAFB;
+            }
+        }
+        
+        .delve-settings-header {
+            padding: 60px 32px 24px 32px;
+        }
+        
+        .delve-settings-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+            color: #1B1B1B;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-title {
+                color: #F9FAFB;
+            }
+        }
+        
+        .delve-settings-subtitle {
+            font-size: 0.9375rem;
+            color: #374151;
+            margin: 0 0 16px 0;
+            line-height: 1.5;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-subtitle {
+                color: #E5E7EB;
+            }
+        }
+        
+        .delve-settings-info {
+            font-size: 0.875rem;
+            color: #6B7280;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-info {
+                color: #9CA3AF;
+            }
+        }
+        
+        .delve-settings-info a {
+            color: inherit;
+            text-decoration: underline;
+        }
+        
+        .delve-settings-info a:hover {
+            text-decoration: underline;
+        }
+        
+        .delve-categories-container {
+            padding: 0 32px;
+        }
+        
+        .delve-category {
+            /* No borders */
+        }
+        
+        .delve-category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            cursor: default;
+        }
+        
+        .delve-category-header[data-expandable="true"] {
+            cursor: pointer;
+        }
+        
+        .delve-category-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .delve-category-icon {
+            position: relative;
+            width: 16px;
+            height: 16px;
+            color: #6B7280;
+            user-select: none;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-category-icon {
+                color: #9CA3AF;
+            }
+        }
+        
+        .delve-category-icon svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        
+        .delve-category-icon .icon-plus {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .delve-category-icon .icon-minus {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .delve-category.expanded .delve-category-icon .icon-plus {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .delve-category.expanded .delve-category-icon .icon-minus {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .delve-category-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1B1B1B;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-category-name {
+                color: #F9FAFB;
+            }
+        }
+        
+        .delve-category-status {
+            font-size: 0.875rem;
+            color: #10B981;
+            font-weight: 500;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-category-status {
+                color: #34D399;
+            }
+        }
+        
+        .delve-toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: #E5E7EB;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            flex-shrink: 0;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-toggle {
+                background: hsl(0 0% 30%);
+            }
+            
+            .delve-toggle.enabled {
+                background: #FFFFFF;
+            }
+            
+            .delve-toggle.disabled-permanent {
+                background: hsl(0 0% 20%);
+                cursor: not-allowed;
+            }
+        }
+        
+        .delve-toggle.enabled {
+            background: #10B981;
+        }
+        
+        .delve-toggle.disabled-permanent {
+            background: #F3F4F6;
+            cursor: not-allowed;
+        }
+        
+        .delve-toggle-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            will-change: transform;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-toggle.enabled .delve-toggle-thumb {
+                background: hsl(0 0% 11%);
+            }
+        }
+        
+        .delve-toggle.enabled .delve-toggle-thumb {
+            transform: translateX(22px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+        
+        .delve-category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .delve-category.expanded .delve-category-content {
+            max-height: 200px;
+        }
+        
+        .delve-category-content-inner {
+            opacity: 0;
+            clip-path: inset(0 0 100% 0);
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), clip-path 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .delve-category.expanded .delve-category-content-inner {
+            opacity: 1;
+            clip-path: inset(0 0 0 0);
+        }
+        
+        .delve-category-description {
+            font-size: 0.875rem;
+            color: #6B7280;
+            line-height: 1.5;
+            margin: 0 0 20px 0;
+            padding-left: 26px;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-category-description {
+                color: #9CA3AF;
+            }
+        }
+        
+        .delve-settings-actions {
+            padding: 20px 32px 24px 32px;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            background: #FCFBF8;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-actions {
+                background: hsl(0 0% 11%);
+            }
+        }
+        
+        .delve-settings-actions .delve-btn {
+            flex: 1;
+            max-width: 250px;
+        }
+        
+        .delve-settings-footer {
+            padding: 12px 24px;
+            background: #F9FAFB;
+            text-align: center;
+            border-radius: 0 0 0 20px;
+            flex-shrink: 0;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-footer {
+                background: hsl(0 0% 8%);
+            }
+        }
+        
+        .delve-settings-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .delve-settings-brand-text {
+            font-size: 0.6875rem;
+            color: #9CA3AF;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-settings-brand-text {
+                color: #6B7280;
+            }
+        }
+        
+        .delve-brand-footer {
+            padding: 16px 24px;
+            background: #F9FAFB;
+            text-align: center;
+            border-radius: 0 0 0 20px;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-brand-footer {
+                background: hsl(0 0% 8%);
+            }
+        }
+        
+        .delve-brand-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .delve-brand-logo {
+            width: 80px;
+            height: 24px;
+            flex-shrink: 0;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 2px;
+            margin-bottom: 1px;
+        }
+        
+        .delve-brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+        
+        .delve-brand-logo svg {
+            width: 80px;
+            height: 24px;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+        
+        .delve-brand-text {
+            font-size: 0.75rem;
+            color: #9CA3AF;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-brand-text {
+                color: #6B7280;
+            }
+        }
+        
+        .delve-brand-link {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .delve-brand-link {
+                color: #FFFFFF;
+            }
+        }
+        
+        .delve-brand-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .delve-cookie-banner {
+                bottom: 12px;
+                left: 12px;
+                right: 12px;
+                transform: translateY(100px);
+                max-width: none;
+                width: auto;
+                border-radius: 1.75rem;
+                padding: 16px;
+            }
+            
+
+            
+            .delve-cookie-banner.show {
+                transform: translateY(0);
+            }
+            
+            .delve-cookie-banner.hiding {
+                transform: translateY(120px);
+                opacity: 0;
+                pointer-events: none;
+                visibility: hidden;
+            }
+            
+            .delve-banner-content {
+                gap: 16px;
+            }
+            
+            .delve-banner-title {
+                font-size: 1.125rem;
+            }
+            
+            .delve-banner-message {
+                font-size: 0.8125rem;
+                line-height: 1.4;
+            }
+            
+            .delve-preferences-link {
+                font-size: 0.8125rem;
+                color: #6B7280;
+            }
+            
+            .delve-banner-actions {
+                gap: 10px;
+            }
+            
+            .delve-btn {
+                padding: 0.625rem 0.875rem;
+                font-size: 0.8125rem;
+                min-height: 2.25rem;
+                border-radius: 20px;
+                width: 100%;
+                font-weight: 500;
+            }
+            
+            .delve-settings-modal {
+                width: 100vw;
+                max-width: 100vw;
+                border-radius: 20px 20px 0 0;
+                border-left: none;
+                bottom: auto;
+                height: 90vh;
+                max-height: 90vh;
+                transform: translateY(100%);
+            }
+            
+            .delve-settings-overlay.show .delve-settings-modal {
+                transform: translateY(0);
+            }
+            
+
+            
+            .delve-settings-close {
+                top: 16px;
+                left: 16px;
+            }
+            
+            .delve-settings-header {
+                padding: 56px 20px 20px 20px;
+            }
+            
+            .delve-settings-title {
+                font-size: 1.25rem;
+                margin-bottom: 12px;
+            }
+            
+            .delve-settings-subtitle {
+                font-size: 0.875rem;
+                line-height: 1.5;
+                margin-bottom: 12px;
+            }
+            
+            .delve-settings-info {
+                font-size: 0.8125rem;
+                line-height: 1.5;
+            }
+            
+            .delve-categories-container {
+                padding: 0 20px;
+            }
+            
+            .delve-category-header {
+                padding: 16px 0;
+            }
+            
+            .delve-category-name {
+                font-size: 0.9375rem;
+            }
+            
+            .delve-category-description {
+                font-size: 0.8125rem;
+                padding-left: 26px;
+                margin-bottom: 16px;
+            }
+            
+            .delve-toggle {
+                width: 44px;
+                height: 24px;
+                border-radius: 12px;
+            }
+            
+            .delve-toggle-thumb {
+                top: 2px;
+                left: 2px;
+                width: 20px;
+                height: 20px;
+            }
+            
+            .delve-toggle.enabled .delve-toggle-thumb {
+                transform: translateX(20px);
+            }
+            
+            .delve-settings-actions {
+                padding: 16px 20px 20px 20px;
+                flex-direction: row;
+                gap: 12px;
+            }
+            
+            .delve-settings-actions .delve-btn {
+                flex: 1;
+                max-width: none;
+                padding: 0.625rem 0.875rem;
+                font-size: 0.875rem;
+                min-height: 2.25rem;
+                font-weight: 500;
+            }
+            
+            .delve-brand-footer {
+                border-radius: 0 0 1.75rem 1.75rem;
+                padding: 8px 20px;
+                margin: 8px -20px -16px -20px;
+            }
+            
+            .delve-banner-footer {
+                border-radius: 0 0 1.75rem 1.75rem;
+                padding: 16px 0 0 0;
+                margin-top: 16px;
+            }
+            
+            .delve-banner-brand-text {
+                font-size: 0.625rem;
+            }
+            
+            .delve-settings-footer {
+                border-radius: 0;
+                padding: 12px 20px;
+            }
+            
+            .delve-settings-brand-text {
+                font-size: 0.75rem;
+            }
+        }
+    `,w={message:"We use cookies to improve your experience, personalize content and ads, and optimize our site.",acceptText:"Accept all",rejectText:"Reject non-essential cookies",settingsText:"Learn more or manage",privacyPolicyText:"View Privacy Policy",privacyPolicyUrl:"https://lovable.dev/privacy",cookieName:"delve_cookie_consent",expiryDays:365,showRejectButton:!0,showSettingsButton:!0,autoShow:!0,manageScriptTags:!0,ccpaEnabled:!0,showInNonRegulatedRegions:!1,showBranding:!0,brandText:"Powered by",brandLink:"https://www.delve.co/book-demo?utm_source=cookieconsent&utm_medium=web&utm_campaign=lovable",brandName:"Delve",defaultCookieTableHeaders:{name:"Cookie Name",purpose:"Purpose",duration:"Duration"},categories:{},onAccept:function(t){},onReject:function(){},onChange:function(t){}},A={necessary:{name:"Essential",description:"These secure areas of this website and enable its basic functions, like page navigation. The website can't work properly without these cookies, so you won't be able to turn them on or off.",required:!0},analytics:{name:"Analytics",description:"These help us understand how visitors interact with this website (such as the pages they visit and how long for) by collecting and reporting information anonymously.",required:!1},marketing:{name:"Advertising",description:"These let us track visitors across this website and online, so we can display ads that are relevant and more engaging to you.",required:!1},preferences:{name:"Preferences",description:"These allow this website to remember information that changes the way it behaves or looks, like your preferred language or the region you're in.",required:!1}};let o={...w},i=null,d=null,F=!1;const S={API_ENDPOINT:"https://cdn.delve.co/api/geo",CACHE_DURATION:36e5,async detect(){const t=this.getCached();if(t)return t;try{const e=await fetch(this.API_ENDPOINT,{method:"GET",credentials:"omit"});if(!e.ok)throw new Error(`Geo API returned ${e.status}`);const r=await e.json();return this.cache(r),r}catch{return{requiresConsent:!0,error:!0,country:"XX",consentType:"gdpr"}}},getCached(){try{const t=sessionStorage.getItem("delve_geo_data");if(!t)return null;const{data:e,timestamp:r}=JSON.parse(t);return Date.now()-r>this.CACHE_DURATION?(sessionStorage.removeItem("delve_geo_data"),null):e}catch{return null}},cache(t){try{sessionStorage.setItem("delve_geo_data",JSON.stringify({data:t,timestamp:Date.now()}))}catch{}}},v={storageKey:"delve_cookie_consent",save(t){const e={timestamp:new Date().toISOString(),categories:t,version:"3.0.0"};try{return localStorage.setItem(this.storageKey,JSON.stringify(e)),y(o.cookieName,"",-1),!0}catch{return y(o.cookieName,encodeURIComponent(JSON.stringify(e)),o.expiryDays),!0}},get(){try{const e=localStorage.getItem(this.storageKey);if(e){const r=JSON.parse(e);if(r.categories&&r.timestamp)return r}}catch{}const t=m(o.cookieName);if(!t)return null;try{return JSON.parse(decodeURIComponent(t))}catch{return null}},exists(){try{if(localStorage.getItem(this.storageKey))return!0}catch{}return m(o.cookieName)!==null},remove(){try{localStorage.removeItem(this.storageKey)}catch{}y(o.cookieName,"",-1)},migrate(){try{const t=m(o.cookieName);if(t&&!localStorage.getItem(this.storageKey)){const e=JSON.parse(decodeURIComponent(t));e.categories&&localStorage.setItem(this.storageKey,JSON.stringify({...e,version:"3.0.0",migrated:!0}))}}catch{}}};function y(t,e,r){const n=new Date;n.setTime(n.getTime()+r*24*60*60*1e3),s.cookie=`${t}=${e};expires=${n.toUTCString()};path=/;SameSite=Lax`}function m(t){const e=t+"=",r=s.cookie.split(";");for(let n=0;n<r.length;n++){let a=r[n];for(;a.charAt(0)===" ";)a=a.substring(1,a.length);if(a.indexOf(e)===0)return a.substring(e.length,a.length)}return null}function N(){return v.exists()}function T(){return v.get()}function x(t){v.save(t)}function M(){s.cookie.split(";").filter(e=>e.trim()).forEach(e=>{const r=e.indexOf("="),n=r>-1?e.substr(0,r).trim():e.trim();n&&(s.cookie=`${n}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`,s.cookie=`${n}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${h.location.hostname};`,s.cookie=`${n}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${h.location.hostname};`,s.cookie=`${n}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`)})}function H(){if(s.getElementById("delve-cookie-styles"))return;const t=s.createElement("style");t.id="delve-cookie-styles",t.textContent=O,s.head.appendChild(t)}function P(t=!1){return t?`<svg width="116" height="24" viewBox="0 0 116 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+            <path d="M24.2615 2.29137C24.2615 1.03764 23.366 0.174681 22.1122 0.174681C18.9698 0.174681 15.8273 0.174681 12.6848 0.174681C9.54237 0.174681 6.56272 0.23981 3.50166 0.142117C1.61292 0.0932701 0.847656 1.24931 0.847656 2.82868C0.880221 5.90602 0.847656 8.98336 0.847656 12.077C0.847656 15.1706 0.847656 17.9712 0.847656 20.9182C0.847656 22.3674 1.71061 23.3769 2.96435 23.3769C9.36326 23.3769 15.7622 23.3769 22.1448 23.3769C23.3497 23.3769 24.2452 22.4813 24.2452 21.2764C24.2452 14.9589 24.2452 8.62516 24.2452 2.30765L24.2615 2.29137ZM3.69705 8.99965C4.28321 7.90874 4.95078 6.86668 5.65091 5.8409C6.15566 5.09191 7.1326 4.92909 7.88158 5.38499C8.66313 5.8409 8.95621 6.81783 8.5003 7.63194C7.89786 8.69028 7.24657 9.69978 6.59528 10.7256C6.28592 11.214 5.79745 11.442 5.22757 11.442C3.94128 11.442 3.0946 10.1394 3.69705 8.99965ZM7.00234 20.153C5.63463 20.153 4.85308 18.7853 5.55322 17.5641C6.54643 15.8707 7.60478 14.1937 8.63056 12.5166C10.4053 9.61837 12.1801 6.72014 13.9548 3.8219C14.3782 3.13805 14.8829 2.60073 15.7459 2.64958C17.081 2.73099 17.7649 4.11498 17.0159 5.35243C15.4528 7.97387 13.8409 10.5627 12.2452 13.1516C11.0403 15.138 9.81916 17.1082 8.61428 19.0946C8.23979 19.7134 7.7676 20.1367 7.00234 20.153ZM21.2656 10.7256C20.3863 12.2398 19.442 13.7215 18.5302 15.2195C17.5207 16.8477 16.5274 18.4922 15.5179 20.1041C14.8504 21.1788 13.906 21.4718 13.0105 20.902C12.1475 20.3646 11.9847 19.3714 12.6034 18.3456C14.4922 15.2683 16.3809 12.191 18.2696 9.09734C18.6441 8.47862 19.1326 8.05528 19.8979 8.07156C21.2493 8.07156 21.9983 9.47183 21.2819 10.7093L21.2656 10.7256Z" fill="white"/>
+            <path d="M78.9557 6.28113H84.0032C85.1918 10.368 86.3804 14.4222 87.569 18.4928C87.6342 18.4928 87.6993 18.4928 87.7644 18.4928C88.953 14.4222 90.1416 10.368 91.3139 6.29741H96.3777C94.3587 12.0613 92.356 17.7438 90.3859 23.41H84.9313C82.9449 17.7275 80.9584 12.0613 78.9395 6.28113H78.9557Z" fill="white"/>
+            <path d="M73.3242 0.455078H77.9158V23.3805H73.3242V0.455078Z" fill="white"/>
+            <path d="M53.6811 9.19882C53.1927 6.46341 51.9878 4.10248 49.6594 2.40913C47.9335 1.17168 45.9796 0.520395 43.9118 0.455266C40.7856 0.34129 37.6431 0.422701 34.4355 0.422701V23.3806C34.6147 23.4132 34.7449 23.4458 34.8752 23.4458C38.1153 23.3969 41.3718 23.5109 44.6119 23.2504C48.7639 22.9247 51.6296 20.6778 53.1113 16.7701C54.0393 14.3114 54.1533 11.7551 53.6974 9.19882H53.6811ZM48.6988 14.6696C48.0638 17.3074 46.3053 18.8705 43.5862 19.0658C42.1859 19.1635 40.7856 19.0821 39.3039 19.0821V4.47697C41.9091 4.59095 44.6608 3.82569 46.8426 5.79584C47.673 6.54482 48.2917 7.68457 48.6336 8.7592C49.2524 10.6805 49.171 12.6832 48.6988 14.6696Z" fill="white"/>
+            <path d="M106.667 15.9896H112.577C112.708 13.6449 112.48 11.5283 111.356 9.59068C110.021 7.31116 107.904 6.22025 105.348 5.9923C102.303 5.73179 99.6167 6.57846 97.7768 9.13477C96.002 11.5934 95.7089 14.4102 96.2788 17.3247C96.6045 19.0018 97.3046 20.5649 98.6072 21.6884C101.782 24.4238 106.699 24.5866 110.135 22.1768C111.242 21.4279 112.17 20.0927 112.447 18.4971C110.949 18.4156 109.549 18.3342 108.165 18.2528C106.862 20.3532 104.811 20.4835 103.199 19.9625C101.587 19.4414 100.708 17.9597 100.854 16.0059H106.651L106.667 15.9896ZM104.778 9.49298C106.667 9.57439 108.181 11.2189 107.986 13.0262H100.887C100.887 10.9584 102.613 9.39529 104.778 9.49298Z" fill="white"/>
+            <path d="M71.6232 13.8412C71.4278 10.5522 70.1089 8.01217 66.9664 6.59562C63.3843 4.98368 58.7602 6.25369 56.5947 9.51014C55.113 11.7408 54.999 14.232 55.2758 16.7557C55.4549 18.4165 56.0736 19.9308 57.2297 21.2008C59.3626 23.5454 62.1306 24.0013 65.094 23.7408C67.1455 23.5617 68.9529 22.7313 70.3043 21.1194C70.923 20.3704 71.3789 19.3772 71.4278 18.4979C69.9624 18.4165 68.5621 18.3351 67.2107 18.2537C65.9732 20.4681 63.482 20.5983 61.7887 19.7679C60.3559 19.0678 59.7371 17.2768 60.0791 15.9905H71.5092C71.558 15.7788 71.5906 15.7137 71.5906 15.6323C71.5906 15.0298 71.6232 14.4437 71.5906 13.8575L71.6232 13.8412ZM67.0967 13.0108H60.0139C59.6883 11.5943 61.3165 9.70553 63.2378 9.49386C65.2242 9.28219 67.2758 10.9267 67.0967 13.0108Z" fill="white"/>
+          </svg>`:`<svg width="116" height="24" viewBox="0 0 116 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M24.2615 2.29137C24.2615 1.03764 23.366 0.174681 22.1122 0.174681C18.9698 0.174681 15.8273 0.174681 12.6848 0.174681C9.54237 0.174681 6.56272 0.23981 3.50166 0.142117C1.61292 0.0932701 0.847656 1.24931 0.847656 2.82868C0.880221 5.90602 0.847656 8.98336 0.847656 12.077C0.847656 15.1706 0.847656 17.9712 0.847656 20.9182C0.847656 22.3674 1.71061 23.3769 2.96435 23.3769C9.36326 23.3769 15.7622 23.3769 22.1448 23.3769C23.3497 23.3769 24.2452 22.4813 24.2452 21.2764C24.2452 14.9589 24.2452 8.62516 24.2452 2.30765L24.2615 2.29137ZM3.69705 8.99965C4.28321 7.90874 4.95078 6.86668 5.65091 5.8409C6.15566 5.09191 7.1326 4.92909 7.88158 5.38499C8.66313 5.8409 8.95621 6.81783 8.5003 7.63194C7.89786 8.69028 7.24657 9.69978 6.59528 10.7256C6.28592 11.214 5.79745 11.442 5.22757 11.442C3.94128 11.442 3.0946 10.1394 3.69705 8.99965ZM7.00234 20.153C5.63463 20.153 4.85308 18.7853 5.55322 17.5641C6.54643 15.8707 7.60478 14.1937 8.63056 12.5166C10.4053 9.61837 12.1801 6.72014 13.9548 3.8219C14.3782 3.13805 14.8829 2.60073 15.7459 2.64958C17.081 2.73099 17.7649 4.11498 17.0159 5.35243C15.4528 7.97387 13.8409 10.5627 12.2452 13.1516C11.0403 15.138 9.81916 17.1082 8.61428 19.0946C8.23979 19.7134 7.7676 20.1367 7.00234 20.153ZM21.2656 10.7256C20.3863 12.2398 19.442 13.7215 18.5302 15.2195C17.5207 16.8477 16.5274 18.4922 15.5179 20.1041C14.8504 21.1788 13.906 21.4718 13.0105 20.902C12.1475 20.3646 11.9847 19.3714 12.6034 18.3456C14.4922 15.2683 16.3809 12.191 18.2696 9.09734C18.6441 8.47862 19.1326 8.05528 19.8979 8.07156C21.2493 8.07156 21.9983 9.47183 21.2819 10.7093L21.2656 10.7256Z" fill="#00060C"/>
+<path d="M78.9557 6.28113H84.0032C85.1918 10.368 86.3804 14.4222 87.569 18.4928C87.6342 18.4928 87.6993 18.4928 87.7644 18.4928C88.953 14.4222 90.1416 10.368 91.3139 6.29741H96.3777C94.3587 12.0613 92.356 17.7438 90.3859 23.41H84.9313C82.9449 17.7275 80.9584 12.0613 78.9395 6.28113H78.9557Z" fill="#00060C"/>
+<path d="M73.3242 0.455078H77.9158V23.3805H73.3242V0.455078Z" fill="#00060C"/>
+<path d="M53.6811 9.19882C53.1927 6.46341 51.9878 4.10248 49.6594 2.40913C47.9335 1.17168 45.9796 0.520395 43.9118 0.455266C40.7856 0.34129 37.6431 0.422701 34.4355 0.422701V23.3806C34.6147 23.4132 34.7449 23.4458 34.8752 23.4458C38.1153 23.3969 41.3718 23.5109 44.6119 23.2504C48.7639 22.9247 51.6296 20.6778 53.1113 16.7701C54.0393 14.3114 54.1533 11.7551 53.6974 9.19882H53.6811ZM48.6988 14.6696C48.0638 17.3074 46.3053 18.8705 43.5862 19.0658C42.1859 19.1635 40.7856 19.0821 39.3039 19.0821V4.47697C41.9091 4.59095 44.6608 3.82569 46.8426 5.79584C47.673 6.54482 48.2917 7.68457 48.6336 8.7592C49.2524 10.6805 49.171 12.6832 48.6988 14.6696Z" fill="#00060C"/>
+<path d="M106.667 15.9896H112.577C112.708 13.6449 112.48 11.5283 111.356 9.59068C110.021 7.31116 107.904 6.22025 105.348 5.9923C102.303 5.73179 99.6167 6.57846 97.7768 9.13477C96.002 11.5934 95.7089 14.4102 96.2788 17.3247C96.6045 19.0018 97.3046 20.5649 98.6072 21.6884C101.782 24.4238 106.699 24.5866 110.135 22.1768C111.242 21.4279 112.17 20.0927 112.447 18.4971C110.949 18.4156 109.549 18.3342 108.165 18.2528C106.862 20.3532 104.811 20.4835 103.199 19.9625C101.587 19.4414 100.708 17.9597 100.854 16.0059H106.651L106.667 15.9896ZM104.778 9.49298C106.667 9.57439 108.181 11.2189 107.986 13.0262H100.887C100.887 10.9584 102.613 9.39529 104.778 9.49298Z" fill="#00060C"/>
+<path d="M71.6232 13.8412C71.4278 10.5522 70.1089 8.01217 66.9664 6.59562C63.3843 4.98368 58.7602 6.25369 56.5947 9.51014C55.113 11.7408 54.999 14.232 55.2758 16.7557C55.4549 18.4165 56.0736 19.9308 57.2297 21.2008C59.3626 23.5454 62.1306 24.0013 65.094 23.7408C67.1455 23.5617 68.9529 22.7313 70.3043 21.1194C70.923 20.3704 71.3789 19.3772 71.4278 18.4979C69.9624 18.4165 68.5621 18.3351 67.2107 18.2537C65.9732 20.4681 63.482 20.5983 61.7887 19.7679C60.3559 19.0678 59.7371 17.2768 60.0791 15.9905H71.5092C71.558 15.7788 71.5906 15.7137 71.5906 15.6323C71.5906 15.0298 71.6232 14.4437 71.5906 13.8575L71.6232 13.8412ZM67.0967 13.0108H60.0139C59.6883 11.5943 61.3165 9.70553 63.2378 9.49386C65.2242 9.28219 67.2758 10.9267 67.0967 13.0108Z" fill="#00060C"/>
+</svg>`}function I(){return h.matchMedia&&h.matchMedia("(prefers-color-scheme: dark)").matches}function R(t){const e=s.createElement("div");e.className="delve-cookie-banner";const r=o.showRejectButton&&t&&(t.consentType==="gdpr"||t.consentType==="ccpa"&&o.ccpaEnabled);return e.innerHTML=`
+            <div class="delve-banner-content">
+                <div class="delve-banner-header">
+                    <h2 class="delve-banner-title">Choose your cookies</h2>
+                    <div class="delve-banner-text">
+                        <p class="delve-banner-message">${o.message}${o.showSettingsButton?` <a href="#" class="delve-preferences-link" data-action="settings">${o.settingsText}</a>`:""}</p>
+                    </div>
+                </div>
+                <div class="delve-banner-actions">
+                    <button class="delve-btn delve-btn-primary" data-action="accept">${o.acceptText}</button>
+                    ${r?`<button class="delve-btn delve-btn-secondary" data-action="reject">${o.rejectText}</button>`:""}
+                </div>
+            </div>
+        `,e}function Z(){const t=s.createElement("div");t.className="delve-settings-overlay";let e="";return Object.keys(o.categories).forEach(r=>{const n=o.categories[r],a=A[r];if(!a)return;const c=a.required,l=n.enabled;e+=`
+                <div class="delve-category expandable" data-category-key="${r}">
+                    <div class="delve-category-header" data-expandable="true">
+                        <div class="delve-category-left">
+                            <span class="delve-category-icon">
+                                <svg class="icon-plus" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 3.5V12.5M3.5 8H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <svg class="icon-minus" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.5 8H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <span class="delve-category-name">${a.name} cookies</span>
+                        </div>
+                        ${c?'<span class="delve-category-status">Always active</span>':`<div class="delve-toggle ${l?"enabled":""}" 
+                                 data-category="${r}">
+                                <div class="delve-toggle-thumb"></div>
+                            </div>`}
+                    </div>
+                    <div class="delve-category-content">
+                        <div class="delve-category-content-inner">
+                            <p class="delve-category-description">${a.description}</p>
+                        </div>
+                    </div>
+                </div>
+            `}),t.innerHTML=`
+            <div class="delve-settings-modal">
+                <button class="delve-settings-close" data-action="close">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="delve-settings-content">
+                    <div class="delve-settings-header">
+                        <h2 class="delve-settings-title">Cookie settings</h2>
+                        <p class="delve-settings-subtitle">Cookies help us to enhance your experience, tailor ads to your interests, and improve our website.</p>
+                        <p class="delve-settings-info">Find out more on different cookie categories by expanding each cookie category below. Read our <a href="https://lovable.dev/privacy" target="_blank" rel="noopener">Cookie Policy</a> to learn more about how we use cookies and how to adjust your cookie preferences if you change your mind.</p>
+                    </div>
+                    <div class="delve-categories-container">
+                        ${e}
+                    </div>
+                </div>
+                <div class="delve-settings-actions">
+                    <button class="delve-btn delve-btn-primary" data-action="save">Confirm my choices</button>
+                    <button class="delve-btn delve-btn-secondary" data-action="accept-all">Accept all</button>
+                </div>
+                ${o.showBranding?`<div class="delve-settings-footer">
+                    <div class="delve-settings-brand">
+                        <span class="delve-settings-brand-text">
+                            ${o.brandText} 
+                            <a href="${o.brandLink}" class="delve-banner-brand-link" target="_blank">
+                                <span class="delve-banner-brand-logo">${P(I())}</span>
+                            </a>
+                        </span>
+                    </div>
+                </div>`:""}
+            </div>
+        `,t}function E(t=!1){i&&(t&&(F=!0),i.parentNode?(i.classList.remove("hiding"),i.offsetWidth,i.classList.add("show")):(s.body.appendChild(i),setTimeout(()=>i.classList.add("show"),10)))}function C(){i&&(i.classList.remove("show"),i.classList.add("hiding"),F=!1)}function B(){if(!d)return;const t=h.scrollY;s.body.style.position="fixed",s.body.style.top=`-${t}px`,s.body.style.width="100%",s.body.dataset.scrollY=t,s.body.appendChild(d),d.style.display="block",requestAnimationFrame(()=>{d.classList.add("show")});const e=d.querySelector(".delve-settings-content");e&&(e.scrollTop=0),Object.keys(o.categories).forEach(r=>{const n=d.querySelector(`[data-category="${r}"]`);n&&!n.dataset.required&&(o.categories[r].enabled?n.classList.add("enabled"):n.classList.remove("enabled"))})}function k(){d&&(d.classList.remove("show"),setTimeout(()=>{const t=s.body.dataset.scrollY||0;s.body.style.position="",s.body.style.top="",s.body.style.width="",h.scrollTo(0,parseInt(t)),delete s.body.dataset.scrollY,d.style.display="none",d.parentNode&&d.parentNode.removeChild(d),i&&i.autoAcceptState&&(i.autoAcceptState.settingsOpen=!1,i.resumeAutoAccept&&i.resumeAutoAccept())},300))}function D(){i&&i.autoAcceptState&&i.autoAcceptState.timer&&(clearTimeout(i.autoAcceptState.timer),i.autoAcceptState.timer=null,i.autoAcceptState.remainingTime=0)}function L(){D(),Object.keys(o.categories).forEach(t=>{o.categories[t].enabled=!0}),x(o.categories),o.manageScriptTags&&p.updateConsent(o.categories),C(),o.onAccept(o.categories)}function q(){D(),Object.keys(o.categories).forEach(t=>{const e=A[t];o.categories[t].enabled=e?.required||!1}),x(o.categories),o.manageScriptTags&&p.updateConsent(o.categories),C(),o.onReject()}function j(){Object.keys(o.categories).forEach(t=>{const e=d.querySelector(`[data-category="${t}"]`);e&&!e.dataset.required&&(o.categories[t].enabled=e.classList.contains("enabled"))}),x(o.categories),o.manageScriptTags&&p.updateConsent(o.categories),k(),C(),o.onChange(o.categories)}function _(){if(i){i.addEventListener("click",function(e){const r=e.target.dataset.action;switch(e.target.tagName==="A"&&r&&e.preventDefault(),r){case"accept":L();break;case"reject":q();break;case"settings":i.pauseAutoAccept&&i.pauseAutoAccept(),i.autoAcceptState&&(i.autoAcceptState.settingsOpen=!0),B();break}});const t=i.querySelector(".delve-preferences-link");t&&(t.addEventListener("mouseenter",function(){i.pauseAutoAccept&&i.pauseAutoAccept()}),t.addEventListener("mouseleave",function(){i.resumeAutoAccept&&i.autoAcceptState&&!i.autoAcceptState.settingsOpen&&i.resumeAutoAccept()}))}d&&(d.addEventListener("click",function(t){if(t.target===d){k();return}const e=t.target.closest("[data-action]");switch(e?e.dataset.action:t.target.dataset.action){case"save":j();break;case"cancel":case"close":k();break;case"accept-all":Object.keys(o.categories).forEach(c=>{o.categories[c].enabled=!0;const l=d.querySelector(`[data-category="${c}"]`);l&&!l.dataset.required&&l.classList.add("enabled")}),j();break}const n=t.target.closest(".delve-toggle");n&&!n.dataset.required&&(n.classList.toggle("enabled"),t.stopPropagation());const a=t.target.closest('.delve-category-header[data-expandable="true"]');a&&!t.target.closest(".delve-toggle")&&a.closest(".delve-category").classList.toggle("expanded")}),d.addEventListener("wheel",function(t){const e=d.querySelector(".delve-settings-content");e&&e.contains(t.target)&&t.stopPropagation()},{passive:!1}))}async function $(){if(!o.categories||Object.keys(o.categories).length===0){console.error("DelveCookieConsent: Categories must be defined in config");return}Object.keys(o.categories).forEach(a=>{const c=o.categories[a];c.cookies&&c.cookies.length>0||c.cookieTable&&c.cookieTable.cookies&&(c.cookies=[],c.cookieTable.cookies.forEach(l=>{const g=l.name;if(g)if(g.includes("*")||g.includes("_*")||g.startsWith("^")||g.includes("/"))if(g.includes("*")){const b=g.replace(/\*/g,".*").replace(/_\.\*/,"_.*");c.cookies.push(new RegExp(`^${b}`))}else if(g.startsWith("/")&&g.endsWith("/")){const b=g.slice(1,-1);c.cookies.push(new RegExp(b))}else c.cookies.push(g);else c.cookies.push(g)}))}),o.manageScriptTags&&p.init(),v.migrate();const t=T(),e=t!==null;t&&(Object.keys(t.categories).forEach(a=>{o.categories[a]&&(o.categories[a].enabled=t.categories[a].enabled)}),o.manageScriptTags&&p.updateConsent(o.categories));const r=await S.detect();o.geoData=r;let n=!0;if(r.consentType==="gdpr"?n=!0:r.consentType==="ccpa"?n=o.ccpaEnabled:n=o.showInNonRegulatedRegions,H(),i=R(r),d=Z(),_(),!n){o.manageScriptTags&&(Object.keys(o.categories).forEach(a=>{o.categories[a].enabled=!0}),p.updateConsent(o.categories));return}if(o.autoShow&&!e&&(E(),r.consentType==="ccpa"||r.consentType!=="gdpr")){let g=function(){l.isPaused||(l.startTime=Date.now(),l.timer=setTimeout(()=>{i&&i.classList.contains("show")&&L()},l.remainingTime))},b=function(){if(!l.timer||l.isPaused)return;l.isPaused=!0,clearTimeout(l.timer);const f=Date.now()-l.startTime;l.remainingTime=Math.max(0,l.remainingTime-f)},u=function(){!l.isPaused||l.remainingTime<=0||l.settingsOpen||(l.isPaused=!1,g())};const a=r.consentType==="ccpa"?1e4:5e3,c=r.consentType==="ccpa"?"\u{1F334} CCPA region detected - auto-dismissing in 10 seconds":"\u{1F30D} Non-regulated region - auto-dismissing in 5 seconds",l={duration:a,startTime:Date.now(),remainingTime:a,isPaused:!1,timer:null,settingsOpen:!1};i.autoAcceptState=l,i.pauseAutoAccept=b,i.resumeAutoAccept=u,setTimeout(()=>{g()},100),i.querySelectorAll(".delve-btn").forEach(f=>{f.addEventListener("mouseenter",b),f.addEventListener("mouseleave",u)})}}function U(t={}){o={...w,...t},s.readyState==="loading"?s.addEventListener("DOMContentLoaded",()=>$()):$()}h.DelveCookieConsent={init:U,show:function(){M(),v.remove(),E(!0)},hide:C,showSettings:B,hasConsent:N,getConsent:T,updatePreferences:function(t){Object.keys(t).forEach(e=>{o.categories[e]&&(o.categories[e].enabled=t[e])}),x(o.categories),o.manageScriptTags&&p.updateConsent(o.categories),o.onChange(o.categories)},acceptedCategory:function(t){return o.categories[t]?.enabled||!1},acceptedService:function(t,e){return o.categories[e]?.services?.[t]?.enabled||!1},getGeoData:function(){return o.geoData||null},detectGeo:async function(){const t=await S.detect();return o.geoData=t,t},getStorageType:function(){try{const t=localStorage.getItem(v.storageKey)!==null,e=m(o.cookieName)!==null;return t?"localStorage":e?"cookie":"none"}catch{return"cookie"}},clearAllConsent:function(){v.remove()}}})(window,document);
