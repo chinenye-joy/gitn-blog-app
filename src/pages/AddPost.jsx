@@ -45,7 +45,7 @@ const AddPost = () => {
       initial={{ opacity: 0, x: -100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
-    className="max-w-3xl mx-auto mt-40 p-6 bg-white rounded-md drop-shadow-lg">
+    className="max-w-3xl mx-auto mt-40 p-9 md:p-6 bg-white rounded-md drop-shadow-lg">
       <h2 className="text-2xl font-bold mb-6 text-black">Add New Post</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
