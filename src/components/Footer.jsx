@@ -8,7 +8,7 @@ import React from 'react'
         <p className="font-mono text-sm">
           &copy; 2025 Frontend Blog. All rights reserved.
         </p>
-        <p className="font-mono text-sm mt-2">
+        <p className="font-mono text-sm mt-3">
           Learn HTML, CSS, Tailwind, JavaScript, and React with us!
         </p>
       </div>
