@@ -3,6 +3,7 @@ import { initialPosts } from "../data/posts";
 import CategoryFilter from "../components/CategoryFilter";
 import BlogCard from "../components/BlogCard";
 import SearchBar from "../components/SearchBar";
+import { motion } from "framer-motion";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -57,7 +58,12 @@ const Home = () => {
   });
 
   return (
-    <div className="mt-6">
+    <motion.div
+      initial={{ opacity: 0, x: -100 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 1 }}
+      className="mt-6"
+    >
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <CategoryFilter
@@ -75,7 +81,7 @@ const Home = () => {
           <p className="text-center text-gray-600 mt-10">No posts found.</p>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

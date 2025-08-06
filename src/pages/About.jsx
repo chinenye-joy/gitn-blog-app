@@ -1,6 +1,13 @@
+import { motion } from "framer-motion";
+
 const About = () => {
   return (
-    <div className="container mx-auto py-8 px-4">
+    <motion.div
+      initial={{ opacity: 0, x: -100 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 1 }}
+      className="container mx-auto py-8 px-4"
+    >
       <h1 className="text-3xl font-bold font-['Inter'] text-[#111827] mb-6 mt-20">
         About Frontend Blog
       </h1>
@@ -29,7 +36,7 @@ const About = () => {
       <p className="font-['Open Sans'] text-[#111827] mt-4">
         Our goal is to provide clear, practical guides for frontend developers.
       </p>
-    </div>
+    </motion.div>
   );
 };
 

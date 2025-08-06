@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const AddPost = () => {
   const navigate = useNavigate();
@@ -35,12 +36,16 @@ const AddPost = () => {
   localStorage.setItem("blog-posts", JSON.stringify(updatedPosts));
 
   navigate("/", { replace: true });
-  window.location.reload(); // ✅ force homepage to reload fresh posts
+  window.location.reload(); //  force homepage to reload fresh posts
 };
 
 
   return (
-    <div className="max-w-3xl mx-auto mt-20 p-6 bg-white rounded-md shadow">
+    <motion.div 
+      initial={{ opacity: 0, x: -100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
+    className="max-w-3xl mx-auto mt-40 p-6 bg-white rounded-md drop-shadow-lg">
       <h2 className="text-2xl font-bold mb-6 text-black">Add New Post</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,7 +101,7 @@ const AddPost = () => {
           Publish Post
         </button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

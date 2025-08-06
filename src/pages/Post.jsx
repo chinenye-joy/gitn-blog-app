@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CommentSection from "../components/CommentSection";
+import { motion } from "framer-motion";
 
 const Post = () => {
   const { id } = useParams();
@@ -25,7 +26,11 @@ const Post = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-20 px-4 py-10">
+    <motion.div
+    initial={{ opacity: 0, x: -100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
+    className="max-w-4xl mx-auto mt-20 px-4 py-10">
       {/* Image */}
       <img
         src={post.url}
@@ -34,7 +39,7 @@ const Post = () => {
       />
 
       {/* Title and Meta */}
-      <h1 className="text-4xl font-bold text-black mb-3">{post.title}</h1>
+      <h1 className="text-4xl font-bold text-black mb-6">{post.title}</h1>
 
       <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6">
         <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
@@ -46,16 +51,16 @@ const Post = () => {
       {/* Content */}
       <div className="prose prose-blue max-w-none text-gray-800 mb-10">
         {post.content.split("\n").map((line, index) => (
-          <p key={index}>{line}</p>
+          <p className="mb-3 text-gray-500" key={index}>{line}</p>
         ))}
       </div>
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-10">
+      <div className="flex flex-wrap gap-2 mb-8">
         {post.tags.map((tag, index) => (
           <span
             key={index}
-            className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
+            className="bg-blue-100 text-blue-700 hover:bg-blue-300 px-3 py-1 rounded-full text-sm"
           >
             #{tag}
           </span>
@@ -74,7 +79,7 @@ const Post = () => {
 
       {/* Comments */}
       <CommentSection />
-    </div>
+    </motion.div>
   );
 };
 
